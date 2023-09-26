@@ -23,7 +23,9 @@ class DBClient {
 
     this.url = `mongodb://${this.DB_HOST}:${this.DB_PORT}`;
     this.client = new MongoClient(this.url, { useUnifiedTopology: true });
-    this.client.connect();
+    this.client.connect((error) => {
+      if (error) console.log(error);
+    });
     this.DB_URL = this.client.db(this.DB_DATABASE) || this.client.db(process.env.DB_DATABASE);
   }
 
@@ -35,9 +37,7 @@ class DBClient {
    * @instance DBClient
    */
   isAlive() {
-    if (this.client === true) {
-      return true;
-    }
+    if (this.client.isConnected()) return true;
     return false;
   }
 
