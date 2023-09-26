@@ -35,7 +35,9 @@ class DBClient {
    * @instance DBClient
    */
   isAlive() {
-    if (this.client) return true;
+    if (this.client === true) {
+      return true;
+    }
     return false;
   }
 
