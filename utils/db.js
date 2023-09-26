@@ -48,7 +48,8 @@ class DBClient {
    * @param {number} nbUsers - Number of users
    */
   async nbUsers() {
-    await this.DB_URL.collection('users').countDocuments();
+    const values = await this.DB_URL.collection('users').countDocuments();
+    return values;
   }
 
   /**
@@ -58,7 +59,8 @@ class DBClient {
    * @param {number} nbFiles - Number of files
    */
   async nbFiles() {
-    await this.DB_URL.collection('files').countDocuments();
+    const value = await this.DB_URL.collection('files').countDocuments();
+    return value;
   }
 }
 
