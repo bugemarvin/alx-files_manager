@@ -60,6 +60,34 @@ class DBClient {
   async nbFiles() {
     return this.DB_URL.collection('files').countDocuments();
   }
+
+  /**
+   * Gets a users email address from MongoDB
+   * @instance DBClient
+   * @async - Async function
+   * @param {string} query - MongoDB query
+   * @returns {object} MongoDB user
+   * @function getUser - Gets a users email address from MongoDB
+   */
+  async getUser(query) {
+    return this.DB_URL.collection('users').findOne(query);
+  }
+
+  /**
+   * Creates a new user in MongoDB
+   * @instance DBClient
+   * @async - Async function
+   * @param {string} email - Users email address
+   * @param {string} password - Users password
+   * @returns {object} MongoDB user
+   * @function createUser - Creates a new user in MongoDB
+   */
+  async createUser(email, password) {
+    const user = { email, password };
+    const result = await this.DB_URL.collection('users').insertOne(user);
+    user.id = result.insertedId;
+    return user;
+  }
 }
 
-export default new DBClient();
+export default DBClient;
