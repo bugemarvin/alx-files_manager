@@ -6,7 +6,7 @@ class AppController {
     return res.status(200).json('Welcome to the API');
   }
 
-  static async getStatus(req, res) {
+  static getStatus(req, res) {
     const redisValue = RedisClient.isAlive();
     const dbValue = DBClient.isAlive();
 

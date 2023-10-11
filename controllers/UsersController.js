@@ -11,7 +11,7 @@ class UsersController {
     if (!email) return res.status(400).json({ error: 'Missing email' });
     if (!password) return res.status(400).json({ error: 'Missing password' });
 
-    const dbClient = new DBClient();
+    const dbClient = DBClient;
     const userExist = await dbClient.getUser({ email });
     if (userExist) return res.status(400).json({ error: 'Already exist' });
 
@@ -20,6 +20,15 @@ class UsersController {
 
     return res.status(201).json({ id: user.id, email: user.email });
   }
+
+  static async getMe(req, res) {
+    const token = req.header('X-Token');
+    if (!token) return res.status(401).json({ error: 'Unauthorized', error2: 'Missing X-Token' });
+    const dbClient = DBClient;
+    const user = await dbClient.getUser({ id: token });
+    if (!user) return res.status(401).json({ error: 'Unauthorized', error2: 'Invalid X-Token' });
+    return res.status(200).json({ id: user.id, email: user.email });
+  }
 }
 
-export default UsersController;
+module.exports = UsersController;

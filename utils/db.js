@@ -20,13 +20,17 @@ class DBClient {
     this.DB_HOST = process.env.DB_HOST || 'localhost';
     this.DB_PORT = process.env.DB_PORT || 27017;
     this.DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
-
     this.url = `mongodb://${this.DB_HOST}:${this.DB_PORT}`;
     this.client = new MongoClient(this.url, { useUnifiedTopology: true });
-    this.client.connect((error) => {
-      if (error) console.log(error);
-    });
-    this.DB_URL = this.client.db(this.DB_DATABASE) || this.client.db(process.env.DB_DATABASE);
+
+    this.client.connect()
+      .then(() => {
+        this.DB_URL = this.client.db(this.DB_DATABASE);
+        console.log('MongoDB connected');
+      })
+      .catch((err) => {
+        console.log('MongoDB connection error', err);
+      });
   }
 
   /**
@@ -37,8 +41,7 @@ class DBClient {
    * @instance DBClient
    */
   isAlive() {
-    if (this.client.isConnected()) return true;
-    return false;
+    return this.client && this.client.isConnected();
   }
 
   /**
@@ -48,7 +51,10 @@ class DBClient {
    * @param {number} nbUsers - Number of users
    */
   async nbUsers() {
-    return this.DB_URL.collection('users').countDocuments();
+    if (this.DB_URL) {
+      return this.DB_URL.collection('users').countDocuments();
+    }
+    return 0;
   }
 
   /**
@@ -58,7 +64,10 @@ class DBClient {
    * @param {number} nbFiles - Number of files
    */
   async nbFiles() {
-    return this.DB_URL.collection('files').countDocuments();
+    if (this.DB_URL) {
+      return this.DB_URL.collection('files').countDocuments();
+    }
+    return 0;
   }
 
   /**
@@ -70,7 +79,10 @@ class DBClient {
    * @function getUser - Gets a users email address from MongoDB
    */
   async getUser(query) {
-    return this.DB_URL.collection('users').findOne(query);
+    if (this.DB_URL) {
+      return this.DB_URL.collection('users').findOne(query);
+    }
+    return 0;
   }
 
   /**
@@ -83,11 +95,14 @@ class DBClient {
    * @function createUser - Creates a new user in MongoDB
    */
   async createUser(email, password) {
-    const user = { email, password };
-    const result = await this.DB_URL.collection('users').insertOne(user);
-    user.id = result.insertedId;
-    return user;
+    if (this.DB_URL) {
+      const user = { email, password };
+      const result = await this.DB_URL.collection('users').insertOne(user);
+      user.id = result.insertedId;
+      return user;
+    }
+    return null;
   }
 }
 
-export default DBClient;
+export default new DBClient();
