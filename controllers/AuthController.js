@@ -14,7 +14,10 @@ class AuthController {
         return res.status(401).send({ error: 'Unauthorized' });
       }
 
-      const authData = Buffer.from(auth.slice(6), 'base64').toString();
+      const authData = Buffer.from(auth.slice(6), 'base64').toString('base64');
+      if (!authData) {
+        return res.status(401).send({ error: 'Unauthorized' });
+      }
       const [email, password] = authData.split(':');
       const hashedPassword = sha1(password);
 
@@ -27,12 +30,10 @@ class AuthController {
       // getting a user id from the database
       if (user._id) {
         user.id = user._id;
-        console.log(user.id);
       }
 
       const token = uuidv4().toString();
       const key = `auth_${token}`;
-      console.log(key);
 
       RedisClient.set(key, user.id, 86400);
 
