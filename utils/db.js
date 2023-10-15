@@ -74,12 +74,12 @@ class DBClient {
   }
 
   /**
-   * Gets a users email address from MongoDB
+   * Gets a users by email address or id from MongoDB
    * @instance DBClient
    * @async - Async function
    * @param {string} query - MongoDB query
    * @returns {object} MongoDB user
-   * @function getUser - Gets a users email address from MongoDB
+   * @function getUser - Gets a users by email address or id from MongoDB
    */
   async getUser(user) {
     if (this.DB_URL) {
