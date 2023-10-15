@@ -1,5 +1,4 @@
-import { MongoClient } from 'mongodb';
-import { ObjectId } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 /**
  * Creates a new MongoDB instance.
