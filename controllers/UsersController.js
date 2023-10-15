@@ -1,5 +1,6 @@
 import sha1 from 'sha1';
 import DBClient from '../utils/db';
+import RedisClient from '../utils/redis';
 
 /**
  * Creates a new MongoDB instance.\
@@ -22,12 +23,16 @@ class UsersController {
   }
 
   static async getMe(req, res) {
-    const token = req.header('X-Token');
-    if (!token) return res.status(401).json({ error: 'Unauthorized', error2: 'Missing X-Token' });
-    const dbClient = DBClient;
-    const user = await dbClient.getUser({ id: token });
-    if (!user) return res.status(401).json({ error: 'Unauthorized', error2: 'Invalid X-Token' });
-    return res.status(200).json({ id: user.id, email: user.email });
+    const token = req.headers['x-token'];
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    const userTokenRedis = await RedisClient.get(`auth_${token}`);
+    if (!userTokenRedis) return res.status(401).json({ error: 'Unauthorized' });
+
+    const user = await DBClient.getUser({ _id: userTokenRedis });
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    return res.status(200).json({ id: user._id, email: user.email });
   }
 }
 

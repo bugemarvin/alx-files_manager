@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 /**
  * Creates a new MongoDB instance.
@@ -26,7 +27,6 @@ class DBClient {
     this.client.connect()
       .then(() => {
         this.DB_URL = this.client.db(this.DB_DATABASE);
-        console.log('MongoDB connected');
       })
       .catch((err) => {
         console.log('MongoDB connection error', err);
@@ -41,7 +41,10 @@ class DBClient {
    * @instance DBClient
    */
   isAlive() {
-    return this.client && this.client.isConnected();
+    if (!this.client) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -78,9 +81,19 @@ class DBClient {
    * @returns {object} MongoDB user
    * @function getUser - Gets a users email address from MongoDB
    */
-  async getUser(query) {
+  async getUser(user) {
     if (this.DB_URL) {
-      return this.DB_URL.collection('users').findOne(query);
+      const info = await this.DB_URL.collection('users');
+      try {
+        if (user._id) {
+          const result = await info.findOne({ _id: new ObjectId(user._id) });
+          return result;
+        }
+        const result = await info.findOne(user);
+        return result;
+      } catch (err) {
+        return err;
+      }
     }
     return 0;
   }

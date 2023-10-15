@@ -19,7 +19,12 @@ class RedisClient {
       host: 'localhost',
       port: 6379,
     });
-    this.error = this.client.on('error', (err) => new Error(err));
+    this.client.on('Redis Connection', () => {
+      console.log('Redis client connected to the server');
+    });
+    this.client.on('Redis Errors:', (err) => {
+      console.log('Connection failed ', err);
+    });
   }
 
   /**
@@ -30,7 +35,7 @@ class RedisClient {
   * @instance RedisClient
   */
   isAlive() {
-    if (this.client.connected === false) {
+    if (!this.client) {
       return false;
     }
     return true;
@@ -49,7 +54,7 @@ class RedisClient {
   async get(key) {
     return new Promise((resolve, reject) => {
       this.client.get(key, (err, data) => {
-        if (err || undefined) reject(err || undefined);
+        if (err) reject(err, console.log('Error: ', err));
         resolve(data);
       });
     });
