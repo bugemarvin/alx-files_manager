@@ -43,6 +43,9 @@ Your code should use the `js` extension\
 Your code will be verified against lint using `ESLint`
 
 ## Provided files
+
+### package.json
+
 ```json
 
 {
@@ -92,7 +95,8 @@ Your code will be verified against lint using `ESLint`
 
 ```
 
-### eslintrc
+### eslintrc.js
+
 ```javascript
 
 module.exports = {
@@ -136,6 +140,7 @@ module.exports = {
 ```
 
 ### babel.config.js
+
 ```javascript
 
 module.exports = {
