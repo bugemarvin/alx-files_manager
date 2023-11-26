@@ -43,9 +43,7 @@ Your code should use the `js` extension\
 Your code will be verified against lint using `ESLint`
 
 ## Provided files
-
-### package.json
-```
+```json
 
 {
   "name": "files_manager",
@@ -94,8 +92,8 @@ Your code will be verified against lint using `ESLint`
 
 ```
 
-### .eslintrc.js
-```
+### eslintrc
+```javascript
 
 module.exports = {
     env: {
@@ -138,7 +136,7 @@ module.exports = {
 ```
 
 ### babel.config.js
-```
+```javascript
 
 module.exports = {
     presets: [
